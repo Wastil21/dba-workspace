@@ -1,0 +1,96 @@
+# ============================================================
+#  GIT DAILY WORKFLOW — DBA Reference
+# ============================================================
+
+# ── FIRST TIME SETUP ─────────────────────────────────────────
+git config --global user.name  "Your Name"
+git config --global user.email "you@company.com"
+git config --global init.defaultBranch main
+git config --global core.editor nano            # or vim
+
+# ── START A REPO ─────────────────────────────────────────────
+git init                        # new local repo
+git clone <url>                 # clone from remote
+git remote add origin <url>     # link existing repo to remote
+
+# ── DAILY WORKFLOW ───────────────────────────────────────────
+git status                      # what's changed?
+git diff                        # see unstaged changes
+git diff --cached               # see staged changes
+
+git add <file>                  # stage a specific file
+git add .                       # stage everything
+git add -p                      # interactive — stage chunks (recommended)
+
+git commit -m "fix: correct payroll query date range"
+git push                        # push to remote
+
+# ── BRANCHING ────────────────────────────────────────────────
+git checkout -b feature/new-script    # create + switch branch
+git checkout main                     # switch to main
+git merge feature/new-script          # merge branch into main
+git branch -d feature/new-script      # delete merged branch
+git branch -a                         # list all branches
+
+# ── INSPECTION ───────────────────────────────────────────────
+git log --oneline --graph --all       # visual commit history
+git log -p <file>                     # full history of a file
+git show <commit_hash>                # inspect a commit
+git blame <file>                      # who changed each line
+
+# ── UNDO / RECOVER ───────────────────────────────────────────
+git restore <file>                    # discard unstaged changes
+git restore --staged <file>           # unstage a file
+git reset HEAD~1 --mixed              # undo last commit, keep changes
+git reset HEAD~1 --hard               # undo last commit, discard changes ⚠️
+git revert <commit_hash>              # safe undo (creates new commit)
+git stash                             # temporarily shelve changes
+git stash pop                         # restore stashed changes
+git stash list                        # see all stashes
+
+# ── TAGGING RELEASES ─────────────────────────────────────────
+git tag -a v1.0 -m "Stable maintenance scripts"
+git push origin --tags
+
+# ── ALIASES (set once, use forever) ──────────────────────────
+git config --global alias.st    "status -sb"
+git config --global alias.lg    "log --oneline --graph --decorate --all"
+git config --global alias.last  "log -1 HEAD --stat"
+git config --global alias.undo  "reset HEAD~1 --mixed"
+git config --global alias.staged "diff --cached"
+
+# After setting aliases:
+git st          # short status
+git lg          # graph log
+git last        # last commit summary
+git undo        # undo last commit safely
+git staged      # what's about to be committed
+
+# ── COMMIT MESSAGE FORMAT (recommended) ──────────────────────
+# <type>: <short description>
+#
+# Types:
+#   feat      — new script or feature
+#   fix       — bug fix in a query/script
+#   chore     — maintenance, cleanup, config
+#   refactor  — restructure without changing behaviour
+#   docs      — documentation updates
+#   security  — vulnerability or permission fix
+#
+# Examples:
+#   feat: add weekly index rebuild script
+#   fix: correct LEFT JOIN in credit report query
+#   chore: clean up old adhoc queries
+#   security: remove hardcoded SA password from backup script
+#   docs: add runbook for monthly backup verification
+
+# ── .gitignore ESSENTIALS FOR DBA REPOS ──────────────────────
+# Add these to your .gitignore:
+#   *.log
+#   *.env
+#   *.secret
+#   *.bak
+#   *.mdf
+#   *.ldf
+#   passwords.txt
+#   secrets/
